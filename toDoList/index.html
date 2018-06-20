@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>ToDoList</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+class Head extends React.Component {
+    render () {
+        return(
+        <div>
+            <h1>Список задач:</h1>
+        </div>
+        );
+    }
+}
+class Task extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      edit: false,
+      seconds:0,
+      minuts:0,
+      taskMinuts:10,
+      color: "green",
+      cheked: false
+      };
+  };
+    edit = () => {
+      this.setState({edit:true});
+    };
+    del = () => {
+      this.props.deleteBlock(this.props.index);
+    };
+    save = () =>{
+      this.props.updateText(this.refs.newCaption.value, this.refs.newInfo.value, this.props.index);
+      this.setState({taskMinuts: this.refs.time.value});
+      this.setState({edit:false});
+    };
+    priorityClick1 = () => {
+      this.props.setPriority1(this.props.index);
+    };
+    priorityClick2 = () => {
+      this.props.setPriority2(this.props.index);
+    };
+    priorityClick3 = () => {
+      this.props.setPriority3(this.props.index);
+    };
+    tick = () => {
+    this.setState({seconds: this.state.seconds + 1});
+    if (this.state.seconds == 60){
+      this.setState({minuts: this.state.minuts + 1});
+      this.setState({seconds: 0});
+    }
+  }
+    componentDidMount = () => {
+      this.interval = setInterval(() => this.tick(), 1000);
+    };
+    handleCheck = () => {
+      this.setState({cheked:!this.state.cheked});
+    };
+    render () {
+      if(this.state.cheked){
+        if(this.state.taskMinuts == 1){
+          if(this.state.seconds == 30){
+            this.state.color="yellow";
+          }
+          if(this.state.minuts == 1){
+            this.state.color="red";
+          }
+        } else {
+          if(this.state.minuts == Math.round(this.state.taskMinuts/2)){
+          this.state.color="yellow";
+          }
+          if(this.state.minuts == this.state.taskMinuts) {
+          this.state.color="red";
+          }
+        }
+      }
+      const style = {backgroundColor: this.state.color};
+      var priorityState;
+      if(this.props.priority == 2){
+        priorityState = "важный";
+      } else if(this.props.priority == 3){
+        priorityState = "очень важный"
+      } else {
+        priorityState = "обычный";
+      }
+        if(!this.state.edit){
+          if(this.props.priorityTask4){
+          return(
+            <div style={style} className="box">
+              <div className="caption">{this.props.caption}</div>
+              <div>Приоритет: {priorityState}</div>
+              <div className="information">{this.props.info}</div>
+              <button onClick={this.edit} className="setButton">Редактировать</button>
+              <button onClick={this.del} className="delButton">Удалить</button>
+            </div>
+            );
+          } else if((this.props.priorityTask1)&&(this.props.priority == 1)) {
+              return(
+                <div style={style} className="box">
+                <div className="caption">{this.props.caption}</div>
+                <div>Приоритет: {priorityState}</div>
+                <div className="information">{this.props.info}</div>
+                <button onClick={this.edit} className="setButton">Редактировать</button>
+                <button onClick={this.del} className="delButton">Удалить</button>
+              </div>
+            );
+          }else if((this.props.priorityTask2)&&(this.props.priority == 2)) {
+              return(
+                <div style={style} className="box">
+                <div className="caption">{this.props.caption}</div>
+                <div>Приоритет: {priorityState}</div>
+                <div className="information">{this.props.info}</div>
+                <button onClick={this.edit} className="setButton">Редактировать</button>
+                <button onClick={this.del} className="delButton">Удалить</button>
+              </div>
+            );
+          } else if((this.props.priorityTask3)&&(this.props.priority == 3)) {
+              return(
+                <div style={style} className="box">
+                <div className="caption">{this.props.caption}</div>
+                <div>Приоритет: {priorityState}</div>
+                <div className="information">{this.props.info}</div>
+                <button onClick={this.edit} className="setButton">Редактировать</button>
+                <button onClick={this.del} className="delButton">Удалить</button>
+              </div>
+            );
+          } else{
+            return(<p></p>);
+          }
+        } else {
+        return (
+          <div style={style} className="box">
+          Приоритет:
+          <input type="radio" name="cheked" onChange={this.priorityClick1} /> обычный
+          <input type="radio" name="cheked" onChange={this.priorityClick2} /> важный
+          <input type="radio" name="cheked" onChange={this.priorityClick3} /> очень важный
+          <p></p>
+          <input type="checkbox" name="chekbox" onChange={this.handleCheck} defaultValue={this.state.cheked}/>Задайте время выполнения задания в минутах:
+          <input type="number" ref="time" name="number" defaultValue="10" className="textTimer" />
+          <textarea ref="newCaption" defaultValue={this.props.caption} className="textCaption"></textarea>
+          <textarea ref="newInfo" defaultValue={this.props.info} className="textInfo"></textarea>
+          <div className="successButton">
+          <button onClick={this.save}>Сохранить</button>
+          </div>
+          </div>
+            );
+          }
+        }
+      }
+  class Field extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      tasks: [],
+      priorityTask1: false,
+      priorityTask2: false,
+      priorityTask3: false,
+      priorityTask4: true
+    };
+  };
+  deleteBlock = (i) => {
+    var array = this.state.tasks;
+    array.splice (i, 1);
+    this.setState ({tasks: array});
+  };
+  updateText = (textCaption, textInfo, i) => {
+    var array = this.state.tasks;
+    array[i].caption = textCaption;
+    array[i].info = textInfo;
+    this.setState ({tasks: array});
+  };
+  addNewTask = () => {
+    var array = this.state.tasks;
+    var countElements = this.state.tasks.length + 1;
+    array.push({
+      caption: "Задание " + countElements,
+      info: "Описание задания " + countElements,
+      priority: 1,
+    });
+    this.setState({tasks: array});
+  };
+  priorityTask1 = () => {
+    this.setState({priorityTask1: true});
+    this.setState({priorityTask2: false});
+    this.setState({priorityTask3: false});
+    this.setState({priorityTask4: false});
+  };
+  priorityTask2 = () => {
+    this.setState({priorityTask1: false});
+    this.setState({priorityTask2: true});
+    this.setState({priorityTask3: false});
+    this.setState({priorityTask4: false});
+  };
+  priorityTask3 = () => {
+    this.setState({priorityTask1: false});
+    this.setState({priorityTask2: false});
+    this.setState({priorityTask3: true});
+    this.setState({priorityTask4: false});
+  };
+  priorityTask4 = () => {
+    this.setState({priorityTask1: false});
+    this.setState({priorityTask2: false});
+    this.setState({priorityTask3: false});
+    this.setState({priorityTask4: true});
+  };
+  setPriority1 = (index) => {
+    this.state.tasks[index].priority = 1;
+  };
+  setPriority2 = (index) => {
+    this.state.tasks[index].priority = 2;
+  };
+  setPriority3 = (index) => {
+    this.state.tasks[index].priority = 3;
+  };
+
+  eachTask = (item, i) => {
+    return (
+      <Task key={i} index={i} caption={item.caption} info={item.info} priority={item.priority}
+      deleteBlock={this.deleteBlock} updateText={this.updateText} setPriority1={this.setPriority1}
+      setPriority2={this.setPriority2} setPriority3={this.setPriority3}
+      priorityTask1={this.state.priorityTask1} priorityTask2={this.state.priorityTask2} priorityTask3={this.state.priorityTask3}
+      priorityTask4={this.state.priorityTask4} ></Task>
+      );
+  };
+  render() {
+    return (
+      <div className="field">
+        <div className="newTaskButton">
+          <button onClick={this.addNewTask}>Добавить новое задание</button>
+          <p>Показать задания: </p>
+          <input type="radio" name="chekedP" onChange={this.priorityTask1} defaultChecked={this.state.priorityTask1}/> обычные
+          <input type="radio" name="chekedP" onChange={this.priorityTask2} defaultChecked={this.state.priorityTask2}/> важные
+          <input type="radio" name="chekedP" onChange={this.priorityTask3} defaultChecked={this.state.priorityTask3}/> очень важные
+          <input type="radio" name="chekedP" onChange={this.priorityTask4} defaultChecked={this.state.priorityTask4}/> все
+        </div>
+        {this.state.tasks.map (this.eachTask)}
+      </div>
+    );
+  }
+}
+    ReactDOM.render(
+        <div>
+          <Head />
+          <Field />
+        </div>,
+        document.getElementById('root')
+    );
+</script>
+</body>
+</html>

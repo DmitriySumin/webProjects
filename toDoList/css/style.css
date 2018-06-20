@@ -1,0 +1,61 @@
+body {
+  background-color: #e1e388;
+}
+@font-face {
+  font-family: "cursive";
+  src = url("/home/dmitriy/WebstormProjects/webProjects/toDoList/fonts/cursive.ttf");
+}
+h1 {
+  text-align: center;
+  font-family: "cursive";
+}
+.caption {
+  text-align: center;
+  font-size: 25px;
+}
+.information {
+  text-align: left;
+  font-size: 20px;
+}
+
+.setButton {
+  margin: 10px;
+  margin-left: 100px;
+}
+
+.delButton {
+  margin: 10px;
+  margin-left: 850px;
+}
+
+.successButton {
+  margin: 10px;
+  margin-left: 600px;
+}
+
+.newTaskButton{
+  margin: 10px;
+  margin-bottom: 30px;
+}
+.textCaption {
+  margin: 10px;
+  margin-left: 170px;
+  width: 200px;
+  height: 50px;
+}
+
+.textInfo {
+  margin: 10px;
+  margin-left: 500px;
+  width: 300px;
+  height: 60px;
+}
+
+.textTimer{
+  width: 40px;
+  height: 20px;
+}
+
+.box{
+  margin:10px;
+}
